@@ -9,6 +9,7 @@ print "Starting paris-traceroute"
 
 from Web100 import *
 import errno
+import logging
 import os
 import subprocess
 import sys
@@ -56,11 +57,15 @@ def do_traceroute(rem_address):
     t = time.time()
     logf = getlogf(t)
 
+    logging.info('running traceroute to %s' % rem_address)
     process = subprocess.Popen(["paris-traceroute","-picmp","--algo=exhaustive",rem_address],
                                stdout = subprocess.PIPE)
-    (so,se) = process.communicate()
-    logf.write(so)
-    logf.write("\n")
+    (so, se) = process.communicate()
+    if so:
+        logf.write(so)
+        logf.write("\n")
+    if se:
+        logging.error(se)
     logf.close()
 
 
